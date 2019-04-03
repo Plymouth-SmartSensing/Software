@@ -24,10 +24,17 @@ char getPin(int pin){
 
 int main(int argc, char* argv[]){
 	int fd = wiringPiI2CSetup(0x45);
-
+	wiringPiSetup();
+	pinMode(7, OUTPUT);
 	int pin = 0;
+	float resistRef = 0.0;
+	bool threshold = 0;
 	if(argc > 1)
 		pin = atoi(argv[1]);
+	if(argc > 2)
+		resistRef = atof(argv[2]);
+	if(argc > 3)
+		threshold = atof(argv[3]);
 
 	string url = "http://142.93.35.60/app/data/new";
 	char byte1 = getPin(pin);
@@ -61,8 +68,8 @@ int main(int argc, char* argv[]){
 
 		signed int voltage = ((a & 0x3F) << 10 | (b << 2) | (c >> 6))/2;
 		cout << "Voltage : " << voltage << endl;
-		float resist = voltage/65536.0*5.0;
-		resist = resist*2000.0/(5-resist);
+		float resist = voltage/65536.0*5.0-2.5;
+		resist = resist*resistRef/2.5;
 		cout << resist << endl;
 		string post = "id=0&value=" + to_string(resist);
 		request.setOpt(new curlpp::options::PostFields(post));
@@ -78,6 +85,13 @@ int main(int argc, char* argv[]){
 			std::cout << e.what() << std::endl;
 		}
 		
+		if(threshold>0){
+			if(voltage/2.5>threshold)
+				digitalWrite(8, HIGH);
+			else
+				digitalWrite(8, LOW);
+		}
+
 		delay(10);
 	}
 	return 0;
