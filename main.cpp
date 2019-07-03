@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
 	curlpp::Easy request;
 
 	request.setOpt(new curlpp::options::Url(url.c_str()));
-	request.setOpt(new curlpp::options::Verbose(true));
+	request.setOpt(new curlpp::options::Verbose(false));
 
 	std::list<std::string> header;
 	header.push_back("Content-Type: application/x-www-form-urlencoded");
