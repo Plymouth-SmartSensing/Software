@@ -69,7 +69,7 @@ int main(int argc, char* argv[]){
 		signed int voltage = ((a & 0x3F) << 10 | (b << 2) | (c >> 6))/2;
 		cout << "Voltage : " << voltage << endl;
 		float resist = voltage/65536.0*5.0-2.5;
-		resist = resist*resistRef/2.5;
+		resist = resist*resistRef/(5.0-resist);
 		cout << resist << endl;
 		string post = "id=0&value=" + to_string(resist);
 		request.setOpt(new curlpp::options::PostFields(post));
